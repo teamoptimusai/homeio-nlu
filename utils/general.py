@@ -122,14 +122,12 @@ def eval_fn(data_loader, model, device, n_examples, batch=None):
     val_scenario_acc = correct_predictions_scenario.double()/n_examples
     return val_loss, val_entity_acc, val_intent_acc, val_scenario_acc
 
-# TODO: Debug Test function
-
 
 def test_fn(data_loader, model, device, enc_list):
     model.eval()
     final_loss = 0
-    tasks_y_hats = [None, None]
-    tasks_targets = [None, None]
+    tasks_y_hats = [None, None, None]
+    tasks_targets = [None, None, None]
 
     precision_dict, recall_dict, fs_dict, fig_dict = {}, {}, {}, {}
 
@@ -138,19 +136,22 @@ def test_fn(data_loader, model, device, enc_list):
             for k, v in batch.items():
                 batch[k] = v.to(device)
 
-            (_, intent_logits, scenario_logits) = model(
+            (entity_logits, intent_logits, scenario_logits) = model(
                 batch['ids'], batch['mask'], batch['token_type_ids'])
 
+            entity_loss = loss_func(
+                entity_logits, batch['target_entity'], batch['mask'], model.num_entity, entity=True)
             intent_loss = loss_func(
                 intent_logits, batch['target_intent'], batch['mask'], model.num_intent)
             scenario_loss = loss_func(
                 scenario_logits, batch['target_scenario'], batch['mask'], model.num_scenario)
 
-            loss = (intent_loss + scenario_loss)/2
+            loss = (entity_loss + intent_loss + scenario_loss)/3
             final_loss += loss
 
-            targets_keys = ['target_intent', 'target_scenario']
-            logits_list = [intent_logits, scenario_logits]
+            targets_keys = ['target_entity',
+                            'target_intent', 'target_scenario']
+            logits_list = [entity_logits, intent_logits, scenario_logits]
 
             for i, (y_hats, target, target_key, logits) in enumerate(zip(tasks_y_hats, tasks_targets, targets_keys, logits_list)):
                 if not (y_hats is None):
@@ -161,15 +162,13 @@ def test_fn(data_loader, model, device, enc_list):
                     tasks_y_hats[i] = to_yhat(logits)
                     tasks_targets[i] = batch[target_key].cpu()
 
-            for y_hats, target, enc, key in zip(tasks_y_hats,
-                                                tasks_targets,
-                                                enc_list,
-                                                ['intent', 'scenario']):
-                precision, recall, fs, fig = classifcation_report(
-                    y_hats, target, enc)
+        for y_hats, target, enc, key in zip(tasks_y_hats, tasks_targets, enc_list, ['entity', 'intent', 'scenario']):
+            precision, recall, fs, fig = classifcation_report(
+                y_hats, target, enc)
 
-                precision_dict[key] = precision
-                recall_dict[key] = recall
-                fs_dict[key] = fs
-                fig_dict[key] = fig
+            precision_dict[key] = precision
+            recall_dict[key] = recall
+            fs_dict[key] = fs
+            fig_dict[key] = fig
+
     return final_loss/len(data_loader), precision_dict, recall_dict, fs_dict, fig_dict
