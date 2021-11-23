@@ -4,9 +4,9 @@ import torch
 RAW_DATASET_PATH = 'data/nlu.csv'
 ER_DATASET_PATH = 'data/er_dataset.csv'
 IS_DATASET_PATH = 'data/is_dataset.csv'
-MODEL_PATH = ''
-TRACE_MODEL_PATH = ''
 LOG_PATH = 'runs/train/test_run'
+MODEL_PATH = f'{LOG_PATH}/weights/epoch50_best_model.pth'
+TRACE_MODEL_PATH = f'{LOG_PATH}/weights/epoch50_best_model_trace.pth'
 SAVE_MODEL = True
 
 MAX_LEN = 61+2

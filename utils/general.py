@@ -122,6 +122,8 @@ def eval_fn(data_loader, model, device, n_examples, batch=None):
     val_scenario_acc = correct_predictions_scenario.double()/n_examples
     return val_loss, val_entity_acc, val_intent_acc, val_scenario_acc
 
+# TODO: Debug Test function
+
 
 def test_fn(data_loader, model, device, enc_list):
     model.eval()
@@ -136,7 +138,7 @@ def test_fn(data_loader, model, device, enc_list):
             for k, v in batch.items():
                 batch[k] = v.to(device)
 
-            (intent_logits, scenario_logits) = model(
+            (_, intent_logits, scenario_logits) = model(
                 batch['ids'], batch['mask'], batch['token_type_ids'])
 
             intent_loss = loss_func(

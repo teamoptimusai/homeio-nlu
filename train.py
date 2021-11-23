@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import torch
 from transformers import AdamW, get_linear_schedule_with_warmup
 import numpy as np
+import os
 
 from utils.processing import process_entity_data, process_intent_scenario_data
 import utils.config as config
@@ -52,7 +53,7 @@ def run():
     device = config.DEVICE
     model = NLUModel(num_entity, num_intent, num_scenario)
     model.to(device)
-    if config.MODEL_PATH:
+    if os.path.isfile(config.MODEL_PATH):
         model.load_state_dict(torch.load(config.MODEL_PATH))
 
     num_train_steps = config.TRAIN_BATCH_SIZE * config.EPOCHS
