@@ -1,5 +1,5 @@
 import torch
-import config
+import utils.config as config
 
 
 class IntentScenarioDataset:
