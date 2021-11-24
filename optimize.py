@@ -15,7 +15,7 @@ def trace(model):
 
     mask = torch.zeros(1, 63, dtype=torch.long)
     token_type_ids = torch.zeros(1, 63, dtype=torch.long)
-    traced = torch.jit.trace(model, ids, mask, token_type_ids)
+    traced = torch.jit.trace(model, (ids, mask, token_type_ids))
     return traced
 
 
