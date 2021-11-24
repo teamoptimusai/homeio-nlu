@@ -23,7 +23,7 @@ class NLUEngine:
         self.num_intent = len(self.enc_intent.classes_)
         self.num_scenario = len(self.enc_scenario.classes_)
 
-    def process(self, text):
+    def process_sentence(self, text):
         sentence = " ".join(str(text).split())
         inputs = self.tokenizer.encode_plus(
             sentence,
