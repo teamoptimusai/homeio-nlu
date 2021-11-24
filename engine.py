@@ -4,7 +4,7 @@ import argparse
 # from flask import Flask
 
 import utils.config as config
-from utils.inference import entity_extraction, classification
+from utils.inference import entity_extraction, classification, to_entities
 
 
 class NLUEngine:
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     (words_labels, words_scores, intent_sentence_labels, intent_class_scores,
      scenario_sentence_labels, scenario_class_scores) = nlu_engine.predict(test_sentence)
     res = {}
-    res['words_labels'] = words_labels
-    res['intent_sentence_labels'] = intent_sentence_labels
-    res['scenario_sentence_labels'] = scenario_sentence_labels
+    res['entities'] = to_entities(words_labels, words_scores)
+    res['intent'] = intent_sentence_labels
+    res['scenario'] = scenario_sentence_labels
     print(res)

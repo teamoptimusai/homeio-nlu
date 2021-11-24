@@ -27,6 +27,12 @@ def to_yhat(logits):
     return probs.numpy(), y_hat.numpy()
 
 
+def to_entities(words_labels, words_scores):
+    entities = [{'word': word_label, 'entity': words_labels[word_label], 'score': words_scores[word_label]
+                 [words_scores[word_label].argmax()]} for word_label in words_labels if (words_labels[word_label] != 'O')]
+    return entities
+
+
 def entity_extraction(enc_entity, entity_hs, word_pieces, tokenized_ids):
     entity_scores, entity_preds = to_yhat(entity_hs)
     entity_scores = entity_scores[1:len(tokenized_ids)-1, :]
