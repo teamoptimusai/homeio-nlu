@@ -59,7 +59,7 @@ class NLUEngine:
     def predict(self, sentence):
         ids, mask, token_type_ids, tokenized_ids, word_pieces = self.process_sentence(
             sentence)
-        entity_hs, intent_hs, scenario_hs = self.sentence_prediction(
+        entity_hs, intent_hs, scenario_hs = self.predict_sentence(
             ids, mask, token_type_ids)
         words_labels_json, words_scores_json = entity_extraction(
             self.enc_entity, entity_hs, word_pieces, tokenized_ids)
