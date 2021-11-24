@@ -81,4 +81,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     nlu_engine = NLUEngine(args.weights)
-    nlu_engine.predict('wake me up at 5 am please')
+
+    test_sentence = 'wake me up at 5 am please'
+    (words_labels, words_scores, intent_sentence_labels, intent_class_scores,
+     scenario_sentence_labels, scenario_class_scores) = nlu_engine.predict(test_sentence)
+    res = {}
+    res['words_labels'] = words_labels
+    res['intent_sentence_labels'] = intent_sentence_labels
+    res['scenario_sentence_labels'] = scenario_sentence_labels
+    print(res)
