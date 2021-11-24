@@ -1,10 +1,10 @@
 import torch
 import joblib
 import argparse
-# from flask import Flask
+from flask import Flask
 
 import utils.config as config
-from utils.inference import entity_extraction, classification, to_entities
+from utils.inference import entity_extraction, classification, simplify_entities, simplify_intent, simplify_scenario
 
 
 class NLUEngine:
@@ -69,8 +69,15 @@ class NLUEngine:
         scenario_sentence_labels_json, scenario_class_scores_json = classification(
             self.enc_intent, self.enc_scenario, scenario_hs, task='scenario')
 
-        return (words_labels_json, words_scores_json, intent_sentence_labels_json, intent_class_scores_json,
-                scenario_sentence_labels_json, scenario_class_scores_json)
+        prediction = {}
+        prediction['entities'] = simplify_entities(
+            words_labels_json, words_scores_json)
+        prediction['intent'] = simplify_intent(
+            intent_sentence_labels_json, intent_class_scores_json)
+        prediction['scenario'] = simplify_scenario(
+            scenario_sentence_labels_json, scenario_class_scores_json)
+
+        return prediction
 
 
 if __name__ == "__main__":
@@ -83,10 +90,5 @@ if __name__ == "__main__":
     nlu_engine = NLUEngine(args.weights)
 
     test_sentence = 'wake me up at 5 am please'
-    (words_labels, words_scores, intent_sentence_labels, intent_class_scores,
-     scenario_sentence_labels, scenario_class_scores) = nlu_engine.predict(test_sentence)
-    res = {}
-    res['entities'] = to_entities(words_labels, words_scores)
-    res['intent'] = intent_sentence_labels
-    res['scenario'] = scenario_sentence_labels
-    print(res)
+    prediction = nlu_engine.predict(test_sentence)
+    print(prediction)

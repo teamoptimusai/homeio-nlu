@@ -27,10 +27,18 @@ def to_yhat(logits):
     return probs.numpy(), y_hat.numpy()
 
 
-def to_entities(words_labels, words_scores):
+def simplify_entities(words_labels, words_scores):
     entities = [{'word': word_label, 'entity': words_labels[word_label], 'score': words_scores[word_label]
                  [words_scores[word_label].argmax()]} for word_label in words_labels if (words_labels[word_label] != 'O')]
     return entities
+
+
+def simplify_intent(intent_sentence_labels, intent_class_scores):
+    return {'class': intent_sentence_labels[0], 'score': intent_class_scores['scores'][0][intent_sentence_labels[0]]}
+
+
+def simplify_scenario(scenario_sentence_labels, scenario_class_scores):
+    return {'class': scenario_sentence_labels[0], 'score': scenario_class_scores['scores'][0][scenario_sentence_labels[0]]}
 
 
 def entity_extraction(enc_entity, entity_hs, word_pieces, tokenized_ids):
