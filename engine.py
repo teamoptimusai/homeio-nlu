@@ -1,7 +1,7 @@
 import torch
 import joblib
 import argparse
-from flask import Flask
+from flask import Flask, request, jsonify
 
 import utils.config as config
 from utils.inference import entity_extraction, classification, simplify_entities, simplify_intent, simplify_scenario
@@ -69,7 +69,7 @@ class NLUEngine:
         scenario_sentence_labels_json, scenario_class_scores_json = classification(
             self.enc_intent, self.enc_scenario, scenario_hs, task='scenario')
 
-        prediction = {}
+        prediction = {'sentence': sentence}
         prediction['entities'] = simplify_entities(
             words_labels_json, words_scores_json)
         prediction['intent'] = simplify_intent(
@@ -78,6 +78,18 @@ class NLUEngine:
             scenario_sentence_labels_json, scenario_class_scores_json)
 
         return prediction
+
+
+app = Flask(__name__)
+nlu_engine: NLUEngine = None
+
+
+@app.route("/nlu_engine")
+def predict():
+    sentence = request.args.get('sentence')
+    predictions = nlu_engine.predict(sentence)
+    print(predictions)
+    return jsonify(predictions)
 
 
 if __name__ == "__main__":
@@ -89,6 +101,8 @@ if __name__ == "__main__":
 
     nlu_engine = NLUEngine(args.weights)
 
-    test_sentence = 'wake me up at 5 am please'
-    prediction = nlu_engine.predict(test_sentence)
-    print(prediction)
+    # test_sentence = 'wake me up at 5 am please'
+    # prediction = nlu_engine.predict(test_sentence)
+    # print(prediction)
+
+    app.run(debug=True)
