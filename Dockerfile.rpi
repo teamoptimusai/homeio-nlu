@@ -1,8 +1,18 @@
-FROM shenxn/pytorch-pi
+FROM ubuntu
 
 WORKDIR /nlu
 COPY . /nlu
-RUN pip install -r requirements.txt
+RUN apt-get update && apt-get upgrade
+RUN apt-get install -y libopenblas-dev libblas-dev m4 cmake cython python3-dev python3-yaml python3-setuptools
+RUN apt-get install -y python3-pip
+
+ENV NO_CUDA=1
+ENV NO_DISTRIBUTED=1
+ENV NO_MKLDNN=1 
+ENV NO_NNPACK=1
+ENV NO_QNNPACK=1
+
+RUN pip install -r rpi.requirements.txt
 # RUN sh scripts/get_pretrain.sh
 
 EXPOSE 5000

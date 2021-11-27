@@ -1,9 +1,9 @@
-FROM pytorch/pytorch:latest
+FROM pytorch/pytorch
 
 WORKDIR /nlu
 COPY . /nlu
 RUN pip install -r requirements.txt
-# RUN sh scripts/get_pretrain.sh
+RUN sh scripts/get_pretrain.sh
 
 EXPOSE 5000
 
