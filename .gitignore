@@ -3,3 +3,6 @@ runs
 metadata.bin
 .DS_Store
 scripts/*.pth
+.dccache
+.gitignore
+.DS_Store

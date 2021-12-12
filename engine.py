@@ -105,4 +105,4 @@ if __name__ == "__main__":
     # prediction = nlu_engine.predict(test_sentence)
     # print(prediction)
 
-    app.run(host='localhost', debug=True)
+    app.run(port=5000, host='localhost', debug=True)
