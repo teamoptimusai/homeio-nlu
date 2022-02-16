@@ -1,6 +1,5 @@
 from typing import Any
 
-from numpy.core.fromnumeric import size
 from engine import NLUEngine
 from tkinter import *
 
